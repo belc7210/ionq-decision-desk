@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IONQ Decision Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="bg-grid"></div>
+<header class="top">
+  <div class="brand">
+    <div class="mark">IQ</div>
+    <div>
+      <h1>IONQ Decision Desk</h1>
+      <p class="sub">Formula model · not a 12-agent debate · paper / research only</p>
+    </div>
+  </div>
+  <div class="top-meta">
+    <span class="pill">As-of defaults · 23 Sep 2026 09:30 ET</span>
+    <span class="pill muted" id="clock"></span>
+  </div>
+</header>
+<section class="hero">
+  <div class="call-card">
+    <div class="kicker">The call</div>
+    <div class="rating" id="ratingBadge">UNDERWEIGHT</div>
+    <div class="action" id="actionLine">DO NOT CHASE THE OPEN</div>
+    <p class="thesis">Live EV is a story-stock multiple on real but still-unprofitable quantum + foundry sales. A decoder headline is not a revenue print.</p>
+  </div>
+  <div class="hero-stats" id="heroStats"></div>
+</section>
+<nav class="tabs" role="tablist">
+  <button class="tab on" data-tab="tape">Tape & cap</button>
+  <button class="tab" data-tab="econ">Economics</button>
+  <button class="tab" data-tab="scenarios">Scenarios</button>
+  <button class="tab" data-tab="size">Size</button>
+  <button class="tab" data-tab="orders">Orders</button>
+</nav>
+<main>
+<section id="tape" class="panel on">
+  <div class="grid-2">
+    <div class="card">
+      <h2>Tape</h2>
+      <p class="hint">Hot field is the session refresh. Decision price follows the toggle.</p>
+      <label>Last regular close<input type="number" step="0.01" id="lastClose" /></label>
+      <label>Live / indicative<input type="number" step="0.01" id="livePx" class="hot" /></label>
+      <fieldset class="seg">
+        <legend>Price used for the call</legend>
+        <label class="chk"><input type="radio" name="mode" value="live" checked /> Live tape</label>
+        <label class="chk"><input type="radio" name="mode" value="close" /> Last close</label>
+      </fieldset>
+      <label>52-week high<input type="number" step="0.01" id="high52" /></label>
+      <label>Street mean 12-mo PT<input type="number" step="0.01" id="streetPt" /></label>
+      <label>ATR (14)<input type="number" step="0.01" id="atr" /></label>
+      <label>Beta<input type="number" step="0.01" id="beta" /></label>
+    </div>
+    <div class="card">
+      <h2>Capital</h2>
+      <label>Shares in model (mm)<input type="number" step="0.1" id="shares" /></label>
+      <p class="hint">10-Q 29 Jul was 381.0mm. Working 397.3mm. Finviz 405.1mm.</p>
+      <label>PF cash after SkyWater ($mm)<input type="number" step="1" id="cash" /></label>
+      <label>Total debt ($mm)<input type="number" step="0.1" id="debt" /></label>
+      <label>Book / share<input type="number" step="0.01" id="book" /></label>
+      <div class="kv" id="capKv"></div>
+    </div>
+  </div>
+</section>
+<section id="econ" class="panel">
+  <div class="grid-2">
+    <div class="card">
+      <h2>Guide bridge</h2>
+      <p class="hint">Do not treat combined FY26 as a 4x quantum acceleration.</p>
+      <label>FY26 organic low / high ($mm)<div class="pair"><input type="number" id="orgLo" /><input type="number" id="orgHi" /></div></label>
+      <label>FY26 combined low / high ($mm)<div class="pair"><input type="number" id="combLo" /><input type="number" id="combHi" /></div></label>
+      <label>Q1 26 revenue ($mm)<input type="number" step="0.01" id="q1" /></label>
+      <label>Q2 26 revenue ($mm)<input type="number" step="0.01" id="q2" /></label>
+      <label>FY25 revenue ($mm)<input type="number" step="0.01" id="fy25" /></label>
+      <label>TTM revenue ($mm)<input type="number" step="0.01" id="ttm" /></label>
+      <label>TTM gross profit ($mm)<input type="number" step="0.01" id="gp" /></label>
+      <label>RPO 30 Jun 2026 ($mm)<input type="number" step="1" id="rpo" /></label>
+    </div>
+    <div class="card">
+      <h2>Cash vs GAAP theater</h2>
+      <label>Q2 Adj. EBITDA loss ($mm)<input type="number" step="0.1" id="ebitda" /></label>
+      <label>Q2 FCF burn ($mm)<input type="number" step="0.1" id="fcfQ2" /></label>
+      <label>Q1 FCF burn ($mm)<input type="number" step="0.1" id="fcfQ1" /></label>
+      <label>Q2 GAAP net loss ($mm)<input type="number" step="0.1" id="gaapNi" /></label>
+      <div class="kv" id="econKv"></div>
+      <p class="warn">GAAP NI is mostly warrant / investment marks. Do not use it as the operating number.</p>
+    </div>
+  </div>
+</section>
+<section id="scenarios" class="panel">
+  <div class="card">
+    <h2>What FY27 has to be for today EV to look fair</h2>
+    <div class="need" id="pricedIn"></div>
+  </div>
+  <div class="grid-3">
+    <div class="card case bear">
+      <h2>Bear</h2>
+      <label>FY27 sales ($mm)<input type="number" id="bSales" /></label>
+      <label>Exit EV / sales<input type="number" step="0.5" id="bMult" /></label>
+      <label>Exit shares (mm)<input type="number" id="bSh" /></label>
+      <label>Exit net cash ($mm)<input type="number" id="bCash" /></label>
+      <label>Probability<input type="range" min="0" max="100" id="bP" /><span class="rng" id="bPtxt"></span></label>
+      <div class="case-out" id="bOut"></div>
+    </div>
+    <div class="card case base">
+      <h2>Base</h2>
+      <label>FY27 sales ($mm)<input type="number" id="sSales" /></label>
+      <label>Exit EV / sales<input type="number" step="0.5" id="sMult" /></label>
+      <label>Exit shares (mm)<input type="number" id="sSh" /></label>
+      <label>Exit net cash ($mm)<input type="number" id="sCash" /></label>
+      <label>Probability<input type="range" min="0" max="100" id="sP" /><span class="rng" id="sPtxt"></span></label>
+      <div class="case-out" id="sOut"></div>
+    </div>
+    <div class="card case bull">
+      <h2>Bull</h2>
+      <label>FY27 sales ($mm)<input type="number" id="uSales" /></label>
+      <label>Exit EV / sales<input type="number" step="0.5" id="uMult" /></label>
+      <label>Exit shares (mm)<input type="number" id="uSh" /></label>
+      <label>Exit net cash ($mm)<input type="number" id="uCash" /></label>
+      <label>Probability<input type="range" min="0" max="100" id="uP" /><span class="rng" id="uPtxt"></span></label>
+      <div class="case-out" id="uOut"></div>
+    </div>
+  </div>
+  <p class="hint" id="pSum"></p>
+</section>
+<section id="size" class="panel">
+  <div class="grid-2">
+    <div class="card">
+      <h2>Book</h2>
+      <label>Portfolio equity ($)<input type="number" step="1000" id="nav" /></label>
+      <label>Risk budget if stop hits<input type="number" step="0.05" id="riskPct" /><span class="hint">percent of NAV</span></label>
+      <label>Stop distance (x ATR)<input type="number" step="0.1" id="stopX" /></label>
+      <label>Hard weight cap<input type="number" step="0.1" id="capPct" /><span class="hint">percent of NAV</span></label>
+      <label>Policy satellite<input type="number" step="0.1" id="satPct" /><span class="hint">percent of NAV</span></label>
+    </div>
+    <div class="card">
+      <h2>Ticket</h2>
+      <div class="kv" id="sizeKv"></div>
+    </div>
+  </div>
+</section>
+<section id="orders" class="panel">
+  <div class="card">
+    <h2>If you are</h2>
+    <table class="orders">
+      <tr><th>Flat</th><td>Do not buy the gap. First satellite is a post-gap base toward $40.50-$42.00, at the recommended weight only.</td></tr>
+      <tr><th>Token ~1%</th><td>Hold. No add. A close through the old 200-day is not a rebuild signal.</td></tr>
+      <tr><th>Overweight</th><td>Trim into $45-$48 toward the recommended weight.</td></tr>
+      <tr><th>Cut toward zero</th><td>Sequential revenue stall. FCF burn $150mm+ and rising. Combined FY26 guide cut. New primary equity raise.</td></tr>
+      <tr><th>Upgrade only if</th><td>Two prints where gross profit grows faster than opex, with RPO conversion covering dilution. Partnership headlines do not count.</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h2>Catalyst register</h2>
+    <table class="orders">
+      <tr><th>QEC decoder</th><td>22-23 Sep 2026. Research. Already in the gap.</td></tr>
+      <tr><th>NVIDIA NVAQC</th><td>23 Sep 2026. Partnership. Mostly priced.</td></tr>
+      <tr><th>SDT / Gumi</th><td>21-22 Sep 2026. Terms undisclosed.</td></tr>
+      <tr><th>SkyWater close</th><td>31 Jul 2026. Guide already restated.</td></tr>
+      <tr><th>Next print</th><td>~4 Nov 2026. The review date.</td></tr>
+      <tr><th>Superion deliveries</th><td>2027. The real test.</td></tr>
+    </table>
+  </div>
+</section>
+</main>
+<footer>Not investment advice. Defaults from public filings as of 23 Sep 2026. Change inputs; do not rerun a committee.</footer>
+<script src="app.js"></script>
+</body>
+</html>
